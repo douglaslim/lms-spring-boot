@@ -13,6 +13,7 @@ import posmy.interview.boot.model.CreateBookRequest;
 import posmy.interview.boot.model.UpdateBookRequest;
 import posmy.interview.boot.service.book.BookService;
 
+import javax.annotation.security.RolesAllowed;
 import java.util.List;
 
 @RestController
@@ -23,6 +24,7 @@ public class BookController {
     private final BookService bookService;
 
     @GetMapping(value = "/{bookId}")
+    @RolesAllowed({"MEMBER", "LIBRARIAN"})
     public ResponseEntity<Book> getBook(@PathVariable long bookId) {
         try {
             return ResponseEntity.ok(bookService.getBook(bookId));
@@ -32,6 +34,7 @@ public class BookController {
     }
 
     @GetMapping(value = "/available")
+    @RolesAllowed({"MEMBER", "LIBRARIAN"})
     public ResponseEntity<List<Book>> getAvailableBooks() {
         try {
             return ResponseEntity.ok(bookService.getAvailableBooks());
@@ -41,11 +44,13 @@ public class BookController {
     }
 
     @PostMapping
+    @RolesAllowed({"LIBRARIAN"})
     public ResponseEntity<BookEntity> addNewBook(@RequestBody CreateBookRequest createBookRequest) {
         return ResponseEntity.ok(bookService.createBook(createBookRequest));
     }
 
     @DeleteMapping(value = "/{bookId}")
+    @RolesAllowed({"LIBRARIAN"})
     public ResponseEntity<Void> deleteBook(@PathVariable long bookId) {
         try {
             bookService.deleteBook(bookId);
@@ -56,6 +61,7 @@ public class BookController {
     }
 
     @PatchMapping
+    @RolesAllowed({"LIBRARIAN"})
     public ResponseEntity<BookEntity> updateBookDetails(@RequestBody UpdateBookRequest updateBookRequest) {
         try {
             return ResponseEntity.ok(bookService.updateBook(updateBookRequest));

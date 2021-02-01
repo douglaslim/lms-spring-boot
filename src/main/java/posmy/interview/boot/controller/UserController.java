@@ -11,6 +11,7 @@ import posmy.interview.boot.model.UpdateUserRequest;
 import posmy.interview.boot.model.User;
 import posmy.interview.boot.service.user.UserService;
 
+import javax.annotation.security.RolesAllowed;
 import javax.validation.Valid;
 
 @RestController
@@ -26,22 +27,31 @@ public class UserController {
     }
 
     @DeleteMapping
+    @RolesAllowed({"MEMBER"})
     public ResponseEntity<UsersEntity> deleteAccount() throws NoDataFoundException {
         return ResponseEntity.ok(userService.deleteAccount());
     }
 
     @DeleteMapping(value = "/{userId}")
+    @RolesAllowed({"LIBRARIAN"})
     public ResponseEntity<UsersEntity> deleteAccountById(@PathVariable long userId) throws NoDataFoundException, LmsException {
         return ResponseEntity.ok(userService.deleteMemberAccount(userId));
     }
 
     @GetMapping(value = "/{userId}")
+    @RolesAllowed({"LIBRARIAN"})
     public ResponseEntity<User> getMemberDetails(@PathVariable long userId) throws NoDataFoundException, LmsException {
         return ResponseEntity.ok(userService.getMemberDetails(userId));
     }
 
     @PatchMapping
+    @RolesAllowed({"LIBRARIAN"})
     public ResponseEntity<User> updateMemberDetails(@RequestBody @Valid UpdateUserRequest updateUserRequest) throws NoDataFoundException, LmsException {
         return ResponseEntity.ok(userService.updateMemberDetails(updateUserRequest));
+    }
+
+    @PostMapping(value = "/keycloak")
+    public ResponseEntity<UsersEntity> createNewKeycloakUser(@RequestBody @Valid CreateUserRequest createUserRequest) throws LmsException {
+        return ResponseEntity.ok(userService.registerNewUser(createUserRequest));
     }
 }

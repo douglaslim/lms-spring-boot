@@ -10,6 +10,8 @@ import org.springframework.web.bind.annotation.RestController;
 import posmy.interview.boot.exception.NoDataFoundException;
 import posmy.interview.boot.service.bookrecord.BookRecordService;
 
+import javax.annotation.security.RolesAllowed;
+
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/book-record")
@@ -19,11 +21,13 @@ public class BookRecordController {
     private final BookRecordService bookRecordService;
 
     @PostMapping(value = "/{bookId}/borrow")
+    @RolesAllowed({"MEMBER"})
     public ResponseEntity<Long> borrowBook(@PathVariable long bookId) throws NoDataFoundException {
         return ResponseEntity.ok(bookRecordService.borrowBook(bookId));
     }
 
     @PostMapping(value = "/{bookId}/return")
+    @RolesAllowed({"MEMBER"})
     public ResponseEntity<Void> returnBook(@PathVariable long bookId) throws NoDataFoundException {
         bookRecordService.returnBook(bookId);
         return ResponseEntity.ok().build();
